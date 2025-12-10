@@ -1,0 +1,66 @@
+:host {
+  display: block;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.doc__header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0;
+    font-size: 22px;
+  }
+
+  .doc__meta {
+    margin: 0;
+    color: #4b5563;
+  }
+}
+
+.doc__pages {
+  display: grid;
+  gap: 16px;
+}
+
+.doc__page {
+  padding: 12px;
+}
+
+.doc__page-frame {
+  position: relative;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+
+  }
+}
+
+.doc__pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.doc__annotation {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 180px;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.doc__page-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
