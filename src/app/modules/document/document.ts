@@ -2,16 +2,23 @@ import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Annotation as AnnotationComponent } from '../../components/annotation/annotation';
+import { DragContainer } from '../../directives/drag-container';
+import { DragElement } from '../../directives/drag-element';
 import { AnnotationDocument } from './document-resolver';
 import { Zoom } from '../../services/zoom';
 import { Save } from '../../services/save';
+import { RelPosition } from '../../types/position';
+import { NgOptimizedImage } from '@angular/common';
+import { AnnotationPosition } from '../../types/annotation-position';
+import { calcRelativePos } from '../../functions/calc';
 
 @Component({
   selector: 'app-document',
   standalone: true,
-  imports: [AnnotationComponent],
+  imports: [AnnotationComponent, DragContainer, DragElement, NgOptimizedImage],
   templateUrl: './document.html',
   styleUrl: './document.less',
 })
@@ -25,9 +32,14 @@ export class Document implements OnInit, OnDestroy {
   protected readonly document = computed<AnnotationDocument | undefined>(
     () => this.routeData().document as AnnotationDocument | undefined,
   );
-
-  protected readonly annotations = signal<Record<number, AnnotationPlacement[]>>({});
+  protected readonly droppedPositions = signal<Record<number, RelPosition>>({});
+  protected readonly annotations = signal<Record<number, AnnotationPosition[]>>({});
   private saveSub?: Subscription;
+
+  protected handleDrop(index: number, position: RelPosition): void {
+    console.log(index, position);
+    this.droppedPositions.update((current) => ({ ...current, [index]: position }));
+  }
 
   protected handleAddAnnotation(index: number, event: MouseEvent): void {
     const element = event.currentTarget as HTMLElement & Partial<HTMLImageElement>;
@@ -35,7 +47,7 @@ export class Document implements OnInit, OnDestroy {
 
     this.annotations.update((current) => {
       const existing = current[index] ?? [];
-      return { ...current, [index]: [...existing, { id: this.createId(), position }] };
+      return { ...current, [index]: [...existing, { id: uuidv4(), position }] };
     });
   }
 
@@ -67,6 +79,35 @@ export class Document implements OnInit, OnDestroy {
     });
   }
 
+  protected handleAnnotationDrag(
+    pageIndex: number,
+    annotationId: string,
+    position: RelPosition,
+  ): void {
+    this.annotations.update((current) => {
+      const pageAnnotations = current[pageIndex];
+
+      if (!pageAnnotations) {
+        return current;
+      }
+
+      const index = pageAnnotations.findIndex((annotation) => annotation.id === annotationId);
+
+      if (index === -1) {
+        return current;
+      }
+
+      const updated = [...pageAnnotations];
+
+      updated[index] = {
+        ...updated[index],
+        position,
+      };
+
+      return { ...current, [pageIndex]: updated };
+    });
+  }
+
   ngOnInit(): void {
     this.saveSub = this.save.emitted.subscribe(() => {
 
@@ -80,42 +121,7 @@ export class Document implements OnInit, OnDestroy {
   private computePosition(
     event: MouseEvent,
     element: HTMLElement & Partial<HTMLImageElement>,
-  ): DropPosition {
-    const rect = element.getBoundingClientRect();
-
-    if (!rect.width || !rect.height) {
-      return { x: 0, y: 0, relativeX: 0, relativeY: 0 };
-    }
-
-    const relativeX = this.clamp((event.clientX - rect.left) / rect.width);
-    const relativeY = this.clamp((event.clientY - rect.top) / rect.height);
-    const naturalWidth = element.naturalWidth ?? rect.width;
-    const naturalHeight = element.naturalHeight ?? rect.height;
-
-    return {
-      x: Math.round(relativeX * naturalWidth),
-      y: Math.round(relativeY * naturalHeight),
-      relativeX,
-      relativeY,
-    };
+  ): RelPosition {
+    return calcRelativePos(event, element) ?? { x: 0, y: 0, relativeX: 0, relativeY: 0 };
   }
-
-  private clamp(value: number): number {
-    if (value < 0) return 0;
-    if (value > 1) return 1;
-    return value;
-  }
-
-  private createId(): string {
-    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-      return crypto.randomUUID();
-    }
-
-    return `annotation-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`;
-  }
-}
-
-interface AnnotationPlacement {
-  id: string;
-  position: DropPosition;
 }

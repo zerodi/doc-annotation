@@ -2,21 +2,37 @@
   @let doc = document()!;
   <section class="doc__pages">
     @for (page of doc.pages; track page.number) {
+      @let pos = droppedPositions()[page.number];
       @let pageAnnotations = annotations()[page.number];
       <article class="doc__page">
-        <div class="doc__page-frame" (dblclick)="handleAddAnnotation(page.number, $event)">
-           <img
-            [src]="page.imageUrl"
+        <div
+          class="doc__page-frame"
+          appDragContainer
+          (dblclick)="handleAddAnnotation(page.number, $event)"
+          (dropPosition)="handleDrop(page.number, $event)"
+        >
+          <img
+            [ngSrc]="page.imageUrl"
             [alt]="'Page ' + page.number"
-            style="user-select: none"
-          />
+            fill />
+          @if (pos) {
+            <div
+              class="doc__pin"
+              [style.left.%]="pos.relativeX * 100"
+              [style.top.%]="pos.relativeY * 100"
+            ></div>
+          }
           @if (pageAnnotations?.length) {
             @for (annotation of pageAnnotations; track annotation.id) {
               <app-annotation
+                appDragElement
                 class="doc__annotation"
                 [annotationId]="annotation.id"
                 [style.left.%]="annotation.position.relativeX * 100"
                 [style.top.%]="annotation.position.relativeY * 100"
+                (click)="$event.stopPropagation()"
+                (dblclick)="$event.stopPropagation()"
+                (positionChange)="handleAnnotationDrag(page.number, annotation.id, $event)"
                 (remove)="handleRemoveAnnotation(page.number, $event)"
               ></app-annotation>
             }
