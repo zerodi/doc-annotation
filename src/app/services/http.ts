@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 type HttpHeadersInit = HttpHeaders | Record<string, string | string[]>;
@@ -17,7 +17,7 @@ interface RequestOptions {
 export class Http {
   private readonly apiBase = '/api';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly http: HttpClient = inject(HttpClient);
 
   get<T>(path: string, options: RequestOptions = {}): Observable<T> {
     return this.http.get<T>(this.buildUrl(path), options);

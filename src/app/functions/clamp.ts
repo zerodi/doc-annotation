@@ -1,4 +1,4 @@
-export const clamp = (value: number, minSize: number = 0): number => {
+export const clamp = (value: number, minSize = 0): number => {
   if (value < minSize) {
     return minSize;
   }
@@ -6,13 +6,13 @@ export const clamp = (value: number, minSize: number = 0): number => {
     return 1;
   }
   return value;
-}
+};
 
-export const clampWithinBounds = (value: number, minSize: number = 0): number =>  {
+export const clampWithinBounds = (value: number, minSize = 0): number => {
   if (minSize >= 1) {
     return 0;
   }
 
   const maxStart = 1 - minSize;
   return Math.max(0, Math.min(value, maxStart));
-}
+};

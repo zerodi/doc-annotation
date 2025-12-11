@@ -65,7 +65,6 @@ export class DragElement implements OnDestroy {
     if (pos) {
       this.positionChange.emit(pos);
     }
-
   };
 
   private handlePointerUp = (): void => {

@@ -1,7 +1,7 @@
 import { RelativeRect } from './position';
 
-export type AnnotationModel = {
+export interface AnnotationModel {
   id: string;
   rect: RelativeRect;
   text: string;
-};
+}

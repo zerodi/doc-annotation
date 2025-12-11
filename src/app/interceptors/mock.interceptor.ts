@@ -42,7 +42,7 @@ const resolveMockResponse = (request: HttpRequest<unknown>): HttpResponse<unknow
   return null;
 };
 
-export const mockInterceptor: HttpInterceptorFn = (request, next) => {
+export const mockInterceptor: HttpInterceptorFn = request => {
   const response = resolveMockResponse(request);
   if (response) {
     return of(response).pipe(delay(150));

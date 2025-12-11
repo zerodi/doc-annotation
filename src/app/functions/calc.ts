@@ -2,10 +2,7 @@ import { clamp, clampWithinBounds } from './clamp';
 import { DragContext } from '../types/context';
 import { RelativeRect, RelPosition } from '../types/position';
 
-export const calcRelativePos = (
-  event: MouseEvent,
-  element: HTMLElement & Partial<HTMLImageElement>,
-) => {
+export const calcRelativePos = (event: MouseEvent, element: HTMLElement & Partial<HTMLImageElement>) => {
   const rect = element.getBoundingClientRect();
 
   if (!rect.width || !rect.height) {
@@ -21,12 +18,9 @@ export const calcRelativePos = (
     relativeX,
     relativeY,
   };
-}
+};
 
-export const calcOffsetPos = (
-  event: MouseEvent,
-  dragContext: DragContext,
-) => {
+export const calcOffsetPos = (event: MouseEvent, dragContext: DragContext) => {
   const { frame, offsetX, offsetY } = dragContext;
   const frameRect = frame.getBoundingClientRect();
 
@@ -45,7 +39,7 @@ export const calcOffsetPos = (
     relativeX,
     relativeY,
   };
-}
+};
 
 export const calcRect = (start: RelPosition, end: RelPosition): RelativeRect => {
   const minSize = 0.02;
@@ -67,4 +61,4 @@ export const calcRect = (start: RelPosition, end: RelPosition): RelativeRect => 
     relativeWidth: width,
     relativeHeight: height,
   };
-}
+};

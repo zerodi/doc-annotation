@@ -10,5 +10,4 @@ export class Save {
   public emit(): void {
     this.emitted.next();
   }
-
 }

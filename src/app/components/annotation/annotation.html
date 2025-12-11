@@ -1,15 +1,10 @@
 <div class="annotation">
   @if (!isSelection()) {
     <button type="button" class="annotation__close" (click)="delete($event)">x</button>
-    <div
-      contenteditable="plaintext-only"
-      class="annotation__body"
-      (input)="handleTextInput($event)"
-    >{{ text() }}</div>
-    <span
-      class="annotation__resize"
-      (pointerdown)="startResize($event)"
-      aria-label="Resize annotation">
+    <div contenteditable="plaintext-only" class="annotation__body" (input)="handleTextInput($event)">
+      {{ text() }}
+    </div>
+    <span class="annotation__resize" (pointerdown)="startResize($event)" aria-label="Resize annotation">
     </span>
   }
 </div>

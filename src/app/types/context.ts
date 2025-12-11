@@ -1,17 +1,17 @@
 import { Offset, RelativeRect, RelPosition } from './position';
 
-export type DragContext = {
+export interface DragContext extends Offset {
   frame: HTMLElement;
-} & Offset;
+}
 
-export type CreateContext = {
+export interface CreateContext {
   pageIndex: number;
   frame: HTMLElement;
   start: RelPosition;
   lastPosition: RelPosition;
 }
 
-export type ResizeContext = {
+export interface ResizeContext {
   pageIndex: number;
   annotationId: string;
   frame: HTMLElement;

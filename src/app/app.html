@@ -1,33 +1,14 @@
 <tui-root>
   <header class="navigation">
     <tui-app-bar>
-      <button
-        iconStart="@tui.zoom-in"
-        tuiIconButton
-        tuiSlot="right"
-        type="button"
-        (click)="zoom.zoomIn()"
-      >
+      <button iconStart="@tui.zoom-in" tuiIconButton tuiSlot="right" type="button" (click)="zoom.zoomIn()">
         Zoom In
       </button>
-      <span class="zoom" tuiSlot="right">{{ (zoomValue() * 100) | number: '1.0-0' }}%</span>
-      <button
-        iconStart="@tui.zoom-out"
-        tuiIconButton
-        tuiSlot="right"
-        type="button"
-        (click)="zoom.zoomOut()"
-      >
+      <span class="zoom" tuiSlot="right">{{ zoomValue() * 100 | number: '1.0-0' }}%</span>
+      <button iconStart="@tui.zoom-out" tuiIconButton tuiSlot="right" type="button" (click)="zoom.zoomOut()">
         Zoom Out
       </button>
-      <button
-        tuiButton
-        tuiSlot="right"
-        type="button"
-        (click)="save.emit()"
-      >
-        Save
-      </button>
+      <button tuiButton tuiSlot="right" type="button" (click)="save.emit()">Save</button>
     </tui-app-bar>
   </header>
   <div class="wrapper">

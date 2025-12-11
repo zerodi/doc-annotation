@@ -23,18 +23,18 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule, AnnotationComponent, DragContainer, DragElement],
   templateUrl: './document.html',
-  styleUrl: './document.less'
+  styleUrl: './document.less',
 })
 export class Document implements OnInit, OnDestroy {
   public readonly zoom = inject(Zoom);
   public readonly save = inject(Save);
   private readonly route = inject(ActivatedRoute);
   private readonly routeData = toSignal(this.route.data, {
-    initialValue: { document: undefined }
+    initialValue: { document: undefined },
   });
   protected readonly zoomValue = toSignal(this.zoom.value$, { initialValue: 1 });
   protected readonly document = computed<AnnotationDocument | undefined>(
-    () => this.routeData().document as AnnotationDocument | undefined
+    () => this.routeData().document as AnnotationDocument | undefined,
   );
   protected readonly droppedPositions = signal<Record<number, RelPosition>>({});
   protected readonly selections = signal<Record<number, RelativeRect | null>>({});
@@ -44,7 +44,7 @@ export class Document implements OnInit, OnDestroy {
   private resizeContext: ResizeContext | null = null;
 
   protected handleDrop(index: number, position: RelPosition): void {
-    this.droppedPositions.update((current) => ({ ...current, [index]: position }));
+    this.droppedPositions.update(current => ({ ...current, [index]: position }));
   }
 
   protected startAnnotation(index: number, event: PointerEvent): void {
@@ -72,10 +72,10 @@ export class Document implements OnInit, OnDestroy {
       pageIndex: index,
       frame,
       start,
-      lastPosition: start
+      lastPosition: start,
     };
 
-    this.selections.update((current) => ({ ...current, [index]: rect }));
+    this.selections.update(current => ({ ...current, [index]: rect }));
 
     event.preventDefault();
     window.addEventListener('pointermove', this.handleCreateMove, { passive: false });
@@ -83,16 +83,14 @@ export class Document implements OnInit, OnDestroy {
   }
 
   protected handleRemoveAnnotation(index: number, annotationId: string): void {
-    this.annotations.update((current) => {
+    this.annotations.update(current => {
       const pageAnnotations = current[index];
 
       if (!pageAnnotations) {
         return current;
       }
 
-      const updatedAnnotations = pageAnnotations.filter(
-        (annotation) => annotation.id !== annotationId
-      );
+      const updatedAnnotations = pageAnnotations.filter(annotation => annotation.id !== annotationId);
 
       if (updatedAnnotations.length === pageAnnotations.length) {
         return current;
@@ -110,19 +108,15 @@ export class Document implements OnInit, OnDestroy {
     });
   }
 
-  protected handleAnnotationDrag(
-    pageIndex: number,
-    annotationId: string,
-    position: RelPosition
-  ): void {
-    this.annotations.update((current) => {
+  protected handleAnnotationDrag(pageIndex: number, annotationId: string, position: RelPosition): void {
+    this.annotations.update(current => {
       const pageAnnotations = current[pageIndex];
 
       if (!pageAnnotations) {
         return current;
       }
 
-      const index = pageAnnotations.findIndex((annotation) => annotation.id === annotationId);
+      const index = pageAnnotations.findIndex(annotation => annotation.id === annotationId);
 
       if (index === -1) {
         return current;
@@ -137,8 +131,8 @@ export class Document implements OnInit, OnDestroy {
         rect: {
           ...currentRect,
           relativeX: clampWithinBounds(position.relativeX, currentRect.relativeWidth),
-          relativeY: clampWithinBounds(position.relativeY, currentRect.relativeHeight)
-        }
+          relativeY: clampWithinBounds(position.relativeY, currentRect.relativeHeight),
+        },
       };
 
       return { ...current, [pageIndex]: updated };
@@ -146,13 +140,13 @@ export class Document implements OnInit, OnDestroy {
   }
 
   protected updateAnnotationText(pageIndex: number, annotationId: string, text: string): void {
-    this.annotations.update((state) => {
+    this.annotations.update(state => {
       const pageAnnotations = state[pageIndex];
       if (!pageAnnotations) {
         return state;
       }
 
-      const idx = pageAnnotations.findIndex((annotation) => annotation.id === annotationId);
+      const idx = pageAnnotations.findIndex(annotation => annotation.id === annotationId);
       if (idx === -1) {
         return state;
       }
@@ -178,7 +172,7 @@ export class Document implements OnInit, OnDestroy {
       return;
     }
 
-    const annotation = this.annotations()[pageIndex]?.find((item) => item.id === annotationId);
+    const annotation = this.annotations()[pageIndex]?.find(item => item.id === annotationId);
     if (!annotation) {
       return;
     }
@@ -187,7 +181,7 @@ export class Document implements OnInit, OnDestroy {
       pageIndex,
       annotationId,
       frame: frame as HTMLElement,
-      origin: annotation.rect
+      origin: annotation.rect,
     };
 
     window.addEventListener('pointermove', this.handleResizeMove, { passive: false });
@@ -226,7 +220,7 @@ export class Document implements OnInit, OnDestroy {
 
     const rect = calcRect(start, currentPos);
     this.createContext = { ...this.createContext, lastPosition: currentPos };
-    this.selections.update((current) => ({ ...current, [pageIndex]: rect }));
+    this.selections.update(current => ({ ...current, [pageIndex]: rect }));
   };
 
   private handleCreateEnd = (event: PointerEvent): void => {
@@ -239,12 +233,12 @@ export class Document implements OnInit, OnDestroy {
     const rect = calcRect(start, end);
     const id = uuidv4();
 
-    this.annotations.update((current) => {
+    this.annotations.update(current => {
       const existing = current[pageIndex] ?? [];
       return { ...current, [pageIndex]: [...existing, { id, rect, text: '' }] };
     });
 
-    this.selections.update((current) => {
+    this.selections.update(current => {
       const next = { ...current };
       delete next[pageIndex];
       return next;
@@ -259,7 +253,7 @@ export class Document implements OnInit, OnDestroy {
     }
 
     const pageIndex = this.createContext.pageIndex;
-    this.selections.update((current) => {
+    this.selections.update(current => {
       const next = { ...current };
       delete next[pageIndex];
       return next;
@@ -283,15 +277,15 @@ export class Document implements OnInit, OnDestroy {
       return;
     }
 
-    const width = Math.min(clamp(pos.relativeX - origin.relativeX, .02), 1 - origin.relativeX);
-    const height = Math.min(clamp(pos.relativeY - origin.relativeY, .02), 1 - origin.relativeY);
+    const width = Math.min(clamp(pos.relativeX - origin.relativeX, 0.02), 1 - origin.relativeX);
+    const height = Math.min(clamp(pos.relativeY - origin.relativeY, 0.02), 1 - origin.relativeY);
 
-    this.annotations.update((state) => {
+    this.annotations.update(state => {
       const pageAnnotations = state[pageIndex];
       if (!pageAnnotations) {
         return state;
       }
-      const idx = pageAnnotations.findIndex((annotation) => annotation.id === annotationId);
+      const idx = pageAnnotations.findIndex(annotation => annotation.id === annotationId);
       if (idx === -1) {
         return state;
       }
@@ -302,8 +296,8 @@ export class Document implements OnInit, OnDestroy {
         rect: {
           ...origin,
           relativeWidth: width,
-          relativeHeight: height
-        }
+          relativeHeight: height,
+        },
       };
 
       return { ...state, [pageIndex]: next };
@@ -333,15 +327,15 @@ export class Document implements OnInit, OnDestroy {
 
     const payload = {
       documentId: doc.id,
-      pages: doc.pages.map((page) => ({
+      pages: doc.pages.map(page => ({
         number: page.number,
-        annotations: (this.annotations()[page.number] ?? []).map((annotation) => ({
+        annotations: (this.annotations()[page.number] ?? []).map(annotation => ({
           id: annotation.id,
           rect: annotation.rect,
-          text: annotation.text
-        }))
+          text: annotation.text,
+        })),
       })),
-      savedAt: new Date().toISOString()
+      savedAt: new Date().toISOString(),
     };
 
     console.log('Document saved', payload);

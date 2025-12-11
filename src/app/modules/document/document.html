@@ -9,14 +9,11 @@
           class="doc__page-frame"
           appDragContainer
           [style.transform]="'scale(' + zoomValue() + ')'"
-          style="transform-origin: top left;"
+          style="transform-origin: top left"
           (pointerdown)="startAnnotation(page.number, $event)"
           (dropPosition)="handleDrop(page.number, $event)"
         >
-          <img
-            [src]="page.imageUrl"
-            [alt]="'Page ' + page.number"
-          />
+          <img [src]="page.imageUrl" [alt]="'Page ' + page.number" />
           @if (selectionRect) {
             <app-annotation
               class="doc__annotation"

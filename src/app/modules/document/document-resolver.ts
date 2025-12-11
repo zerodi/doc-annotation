@@ -6,7 +6,7 @@ import { MOCK_DOC } from '../../types/mock-data';
 
 export type AnnotationDocument = typeof MOCK_DOC & { id: string };
 
-export const documentResolver: ResolveFn<AnnotationDocument> = (route) => {
+export const documentResolver: ResolveFn<AnnotationDocument> = route => {
   const http = inject(Http);
   const id = route.paramMap.get('uuid') ?? 'mock-doc';
 

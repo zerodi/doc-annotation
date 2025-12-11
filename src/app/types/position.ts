@@ -1,22 +1,21 @@
-export type Position = {
+export interface Position {
   x: number;
   y: number;
-
 }
 
-export type Relative = {
+export interface Relative {
   relativeX: number;
   relativeY: number;
-};
+}
 
-export type RelativeRect = Relative & {
+export interface RelativeRect extends Relative {
   relativeWidth: number;
   relativeHeight: number;
-};
+}
 
-export type Offset = {
+export interface Offset {
   offsetX: number;
   offsetY: number;
 }
 
-export type RelPosition = Relative & Position;
+export interface RelPosition extends Relative, Position {}
