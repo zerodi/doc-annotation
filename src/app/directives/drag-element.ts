@@ -1,7 +1,7 @@
 import { Directive, ElementRef, HostListener, OnDestroy, inject, output } from '@angular/core';
 
 import { RelPosition } from '../types/position';
-import { DragContext } from '../types/drag-context';
+import { DragContext } from '../types/context';
 import { DragContainer } from './drag-container';
 import { calcOffsetPos } from '../functions/calc';
 
@@ -18,6 +18,12 @@ export class DragElement implements OnDestroy {
   @HostListener('pointerdown', ['$event'])
   onPointerDown(event: PointerEvent): void {
     if (event.button !== 0) {
+      return;
+    }
+
+    const target = event.target as HTMLElement | null;
+
+    if (!target?.closest('.annotation__header')) {
       return;
     }
 
@@ -40,8 +46,8 @@ export class DragElement implements OnDestroy {
 
     this.dragContext = {
       frame,
-      offsetX: event.clientX - (hostRect.left + hostRect.width / 2),
-      offsetY: event.clientY - (hostRect.top + hostRect.height / 2),
+      offsetX: event.clientX - hostRect.left,
+      offsetY: event.clientY - hostRect.top,
     };
 
     window.addEventListener('pointermove', this.handlePointerMove, { passive: false });
@@ -84,6 +90,7 @@ export class DragElement implements OnDestroy {
     if (this.container) {
       return this.container.element;
     }
-    return null;
+
+    return this.element.closest('.doc__page-frame');
   }
 }

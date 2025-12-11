@@ -1,5 +1,6 @@
-import { clamp } from './clamp';
-import { DragContext } from '../types/drag-context';
+import { clamp, clampWithinBounds } from './clamp';
+import { DragContext } from '../types/context';
+import { RelativeRect, RelPosition } from '../types/position';
 
 export const calcRelativePos = (
   event: MouseEvent,
@@ -33,19 +34,37 @@ export const calcOffsetPos = (
     return;
   }
 
-  const image = frame.querySelector('img');
-  const naturalWidth = image?.naturalWidth || frameRect.width;
-  const naturalHeight = image?.naturalHeight || frameRect.height;
-
-  const centerX = event.clientX - offsetX;
-  const centerY = event.clientY - offsetY;
-  const relativeX = clamp((centerX - frameRect.left) / frameRect.width);
-  const relativeY = clamp((centerY - frameRect.top) / frameRect.height);
+  const left = event.clientX - offsetX;
+  const top = event.clientY - offsetY;
+  const relativeX = clamp((left - frameRect.left) / frameRect.width);
+  const relativeY = clamp((top - frameRect.top) / frameRect.height);
 
   return {
-    x: Math.round(relativeX * naturalWidth),
-    y: Math.round(relativeY * naturalHeight),
+    x: Math.round(relativeX * frameRect.width),
+    y: Math.round(relativeY * frameRect.height),
     relativeX,
     relativeY,
+  };
+}
+
+export const calcRect = (start: RelPosition, end: RelPosition): RelativeRect => {
+  const minSize = 0.02;
+  const startX = clampWithinBounds(start.relativeX, minSize);
+  const startY = clampWithinBounds(start.relativeY, minSize);
+
+  const clampedEndX = Math.max(startX, Math.min(end.relativeX, 1));
+  const clampedEndY = Math.max(startY, Math.min(end.relativeY, 1));
+
+  const maxWidth = 1 - startX;
+  const maxHeight = 1 - startY;
+
+  const width = Math.max(minSize, Math.min(clampedEndX - startX, maxWidth));
+  const height = Math.max(minSize, Math.min(clampedEndY - startY, maxHeight));
+
+  return {
+    relativeX: startX,
+    relativeY: startY,
+    relativeWidth: width,
+    relativeHeight: height,
   };
 }

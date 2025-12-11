@@ -2,25 +2,28 @@
   @let doc = document()!;
   <section class="doc__pages">
     @for (page of doc.pages; track page.number) {
-      @let pos = droppedPositions()[page.number];
+      @let selectionRect = selections()[page.number];
       @let pageAnnotations = annotations()[page.number];
       <article class="doc__page">
         <div
           class="doc__page-frame"
           appDragContainer
-          (dblclick)="handleAddAnnotation(page.number, $event)"
+          [style.transform]="'scale(' + zoomValue() + ')'"
+          style="transform-origin: top left;"
+          (pointerdown)="startAnnotation(page.number, $event)"
           (dropPosition)="handleDrop(page.number, $event)"
         >
           <img
-            [ngSrc]="page.imageUrl"
+            [src]="page.imageUrl"
             [alt]="'Page ' + page.number"
-            fill />
-          @if (pos) {
-            <div
-              class="doc__pin"
-              [style.left.%]="pos.relativeX * 100"
-              [style.top.%]="pos.relativeY * 100"
-            ></div>
+          />
+          @if (selectionRect) {
+            <app-annotation
+              class="doc__annotation"
+              [annotationId]="'selection-' + page.number"
+              [rect]="selectionRect"
+              [isSelection]="true"
+            ></app-annotation>
           }
           @if (pageAnnotations?.length) {
             @for (annotation of pageAnnotations; track annotation.id) {
@@ -28,11 +31,12 @@
                 appDragElement
                 class="doc__annotation"
                 [annotationId]="annotation.id"
-                [style.left.%]="annotation.position.relativeX * 100"
-                [style.top.%]="annotation.position.relativeY * 100"
+                [rect]="annotation.rect"
                 (click)="$event.stopPropagation()"
                 (dblclick)="$event.stopPropagation()"
                 (positionChange)="handleAnnotationDrag(page.number, annotation.id, $event)"
+                (textChange)="updateAnnotationText(page.number, annotation.id, $event)"
+                (resizeStart)="startResizing(page.number, annotation.id, $event)"
                 (remove)="handleRemoveAnnotation(page.number, $event)"
               ></app-annotation>
             }

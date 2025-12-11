@@ -1,5 +1,5 @@
 <tui-root>
-  <header>
+  <header class="navigation">
     <tui-app-bar>
       <button
         iconStart="@tui.zoom-in"
@@ -10,6 +10,7 @@
       >
         Zoom In
       </button>
+      <span class="zoom" tuiSlot="right">{{ (zoomValue() * 100) | number: '1.0-0' }}%</span>
       <button
         iconStart="@tui.zoom-out"
         tuiIconButton

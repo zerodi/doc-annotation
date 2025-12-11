@@ -4,63 +4,51 @@
   min-height: 100vh;
 }
 
-.doc__header {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 16px;
+.doc {
+  &__toolbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
 
-  h1 {
-    margin: 0;
-    font-size: 22px;
+    button {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #d1d5db;
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
   }
 
-  .doc__meta {
-    margin: 0;
-    color: #4b5563;
+  &__pages {
+    display: grid;
+    gap: 16px;
   }
-}
 
-.doc__pages {
-  display: grid;
-  gap: 16px;
-}
+  &__page {
+    padding: 12px;
+    &-frame {
+      position: relative;
+      overflow: hidden;
+      transform-origin: top left;
 
-.doc__page {
-  padding: 12px;
-}
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        user-select: none;
 
-.doc__page-frame {
-  position: relative;
-  overflow: hidden;
+      }
+    }
+  }
 
-  img {
+  &__annotation {
     display: block;
-    width: 100%;
-    height: auto;
-    user-select: none;
-
+    min-width: 80px;
+    min-height: 60px;
+    z-index: 1;
+    pointer-events: auto;
   }
-}
 
-.doc__pin {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
-  pointer-events: none;
-}
-
-.doc__annotation {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  min-width: 180px;
-  z-index: 1;
-  pointer-events: auto;
-}
-
-.doc__page-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
 }
