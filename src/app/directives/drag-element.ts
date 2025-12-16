@@ -21,12 +21,6 @@ export class DragElement implements OnDestroy {
       return;
     }
 
-    const target = event.target as HTMLElement | null;
-
-    if (!target?.closest('.annotation__header')) {
-      return;
-    }
-
     const frame = this.getContainer();
 
     if (!frame) {
